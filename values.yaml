@@ -1,0 +1,62 @@
+# Default values for etcd-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Install Default RBAC roles and bindings
+rbac:
+  create: true
+  apiVersion: v1beta1
+
+## Service account names and whether to create them
+serviceAccount:
+  pxcOperatorServiceAccount:
+    create: true
+    name:
+
+# Select what to deploy
+deployments:
+  pxcOperator: true
+
+# creates custom resources, not all required,
+# you could use `helm template --values <values.yaml> --name release_name ... `
+# and create the resources yourself to deploy on your cluster later
+customResources:
+  createEtcdClusterCRD: false
+
+# etcdOperator
+pxcOperator:
+  name: pxc-operator
+  replicaCount: 1
+  image:
+    repository: perconalab/percona-xtradb-cluster-operator
+    tag: master
+    pullPolicy: Always
+  resources:
+    cpu: 100m
+    memory: 128Mi
+  nodeSelector: {}
+  commandArgs: {}
+
+## pxc-cluster specific values
+pxcCluster:
+  name: pxc-cluster
+  size: 3
+  version: 0.3.0
+  image:
+    repository: perconalab/pxc-openshift
+    tag: 0.2.0
+    pullPolicy: Always
+  pod:
+    ## Antiaffinity for etcd pod assignment
+    ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+    antiAffinity: false
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    ## Node labels for etcd pod assignment
+    ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+    nodeSelector: {}

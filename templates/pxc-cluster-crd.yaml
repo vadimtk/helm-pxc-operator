@@ -1,0 +1,25 @@
+{{- if .Values.customResources.createPXCClusterCRD }}
+---
+apiVersion: "pxc.percona.com/v1alpha1"
+kind: "PerconaXtraDBCluster"
+metadata:
+  name: {{ .Values.pxcCluster.name }}
+  finalizers:
+    - delete-pxc-pods-in-order
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app: {{ template "etcd-operator.name" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  annotations:
+    "helm.sh/hook": "post-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+spec:
+  secretsName: my-cluster-secrets
+  allowUnsafeConfigurations: false
+  size: {{ .Values.pxcCluster.size }}
+  version: "{{ .Values.pxcCluster.version }}"
+  pod:
+{{ toYaml .Values.pxcCluster.pod | indent 4 }}
+{{- end }}
+

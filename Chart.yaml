@@ -1,0 +1,12 @@
+apiVersion: v1
+description: Percona PXC Helm chart for Kubernetes
+name: pxc-operator
+version: 0.1.0
+appVersion: 0.1.0
+home: https://github.com/percona/percona-xtradb-cluster-operator
+icon: https://raw.githubusercontent.com/coreos/etcd/master/logos/etcd-horizontal-color.png
+sources:
+- https://github.com/percona/percona-xtradb-cluster-operator
+maintainers:
+- name: vadimtk
+  email: vadimtk111@percona.com
