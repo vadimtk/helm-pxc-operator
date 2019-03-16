@@ -3,7 +3,7 @@ name: pxc-operator
 replicaCount: 1
 image:
   repository: perconalab/percona-xtradb-cluster-operator
-  tag: 0.2.0
+  tag: master
   pullPolicy: Always
 
 ## Install Default RBAC roles and bindings

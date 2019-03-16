@@ -26,10 +26,6 @@ spec:
       maxUnavailable: 1
     volumeSpec:
       emptyDir: {}
-      persistentVolumeClaim:
-        resources:
-          requests:
-            storage: 6Gi
   proxysql:
     enabled: false
     size: 1
