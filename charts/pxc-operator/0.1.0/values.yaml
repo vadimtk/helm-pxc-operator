@@ -1,6 +1,6 @@
 ## Default values for the image
-name: pxc-operator
 replicaCount: 1
+
 image:
   repository: perconalab/percona-xtradb-cluster-operator
   tag: master
@@ -8,8 +8,15 @@ image:
 
 ## Install Default RBAC roles and bindings
 rbac:
-  create: true
-  serviceAccountName: default
+  create: false
+
+serviceAccount:
+  pxcOperatorServiceAccount:
+    create: true
+    name:
+
+deployments:
+  pxcOperator: true
 
 resources: {}
   # limits:
@@ -22,3 +29,10 @@ resources: {}
 ## additional command arguments go here; will be translated to `--key=value` form
 ## e.g., analytics: true
 commandArgs: {}
+
+pxcOperator:
+  name: pxc-operator
+
+pxcCluster:
+  name: px-cluster
+  size: 3
