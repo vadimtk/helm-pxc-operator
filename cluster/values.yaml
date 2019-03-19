@@ -1,0 +1,4 @@
+## Default values for the image
+pxcCluster:
+  name: pxc-cluster
+  size: 3

@@ -4,16 +4,12 @@ metadata:
   name: {{ .Values.pxcCluster.name }}
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    app: {{ template "pxc-operator.name" . }}
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
-  annotations:
-    "helm.sh/hook": "post-install"
-    "helm.sh/hook-delete-policy": "before-hook-creation"
   finalizers:
     - delete-pxc-pods-in-order
 spec:
-  secretsName: my-cluster-secrets
+  secretsName: "my-cluster-secrets-{{ .Values.pxcCluster.name }}"
   pxc:
     size: 3
     allowUnsafeConfigurations: false

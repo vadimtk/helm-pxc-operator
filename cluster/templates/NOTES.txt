@@ -1,0 +1,6 @@
+1. PXC Cluster created
+  
+  Check the cluster logs logs
+
+    export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].metadata.name}")
+    kubectl logs $POD_NAME --namespace={{ .Release.Namespace }}

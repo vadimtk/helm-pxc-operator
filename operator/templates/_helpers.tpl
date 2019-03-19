@@ -35,9 +35,10 @@ Create chart name and version as used by the chart label.
 Create the name of the service account to use
 */}}
 {{- define "pxc-operator.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "pxc-operator.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.rbac.create -}}
+    {{ include "pxc-operator.fullname" . }}
 {{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
+    {{ default "default" .Values.rbac.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+

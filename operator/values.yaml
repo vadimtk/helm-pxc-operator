@@ -9,6 +9,7 @@ image:
 ## Install Default RBAC roles and bindings
 rbac:
   create: true
+  serviceAccountName: default
 
 resources: {}
   # limits:
@@ -21,7 +22,3 @@ resources: {}
 ## additional command arguments go here; will be translated to `--key=value` form
 ## e.g., analytics: true
 commandArgs: {}
-
-pxcCluster:
-  name: pxc-cluster1
-  size: 3
