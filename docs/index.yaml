@@ -1,0 +1,37 @@
+apiVersion: v1
+entries:
+  pxc-cluster:
+  - apiVersion: v1
+    appVersion: 0.1.0
+    created: 2019-03-19T02:24:55.138730987Z
+    description: Percona PXC Helm chart for Kubernetes
+    digest: 62104703a696f8abdbccfbed3e13f6d9c1e272c67991c5fb6588cf93f5d3bf51
+    home: https://github.com/percona/percona-xtradb-cluster-operator
+    icon: https://raw.githubusercontent.com/coreos/etcd/master/logos/etcd-horizontal-color.png
+    maintainers:
+    - email: vadimtk111@percona.com
+      name: vadimtk
+    name: pxc-cluster
+    sources:
+    - https://github.com/percona/percona-xtradb-cluster-operator
+    urls:
+    - https://https:/vadimtk.github.io/helm-pxc-operator/pxc-cluster-0.1.0.tgz
+    version: 0.1.0
+  pxc-operator:
+  - apiVersion: v1
+    appVersion: 0.1.0
+    created: 2019-03-19T02:24:55.139748763Z
+    description: Percona PXC Helm chart for Kubernetes
+    digest: a2fbc10739f8627850e598edc41b774c422f1227862db2dbea3f4280b4951170
+    home: https://github.com/percona/percona-xtradb-cluster-operator
+    icon: https://raw.githubusercontent.com/coreos/etcd/master/logos/etcd-horizontal-color.png
+    maintainers:
+    - email: vadimtk111@percona.com
+      name: vadimtk
+    name: pxc-operator
+    sources:
+    - https://github.com/percona/percona-xtradb-cluster-operator
+    urls:
+    - https://https:/vadimtk.github.io/helm-pxc-operator/pxc-operator-0.1.0.tgz
+    version: 0.1.0
+generated: 2019-03-19T02:24:55.137572604Z
