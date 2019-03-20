@@ -1,0 +1,235 @@
+---
+# Source: pxc-operator/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "my-cluster-secrets-px-cluster"
+type: Opaque
+data:
+  root: cm9vdF9wYXNzd29yZA==
+  xtrabackup: YmFja3VwX3Bhc3N3b3Jk
+  monitor: bW9uaXRvcg==
+  clustercheck: Y2x1c3RlcmNoZWNrcGFzc3dvcmQ=
+  proxyuser: czNjcmV0
+  proxyadmin: YWRtaW5fcGFzc3dvcmQ=
+  pmmserver: c3VwYXxefHBheno=
+
+---
+# Source: pxc-operator/templates/service_account.yaml
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: percona-xtradb-cluster-operator
+  labels:
+    app: pxc-operator
+    chart: pxc-operator-0.1.0
+    release: r2
+    heritage: Tiller
+
+---
+# Source: pxc-operator/templates/rbac.yaml
+
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: r2-pxc-operator-pxc-operator
+  annotations:
+    "helm.sh/hook": post-delete
+    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-weight": "1"
+  labels:
+    chart: "pxc-operator-0.1.0"
+    app: pxc-operator
+    heritage: Tiller
+    release: r2
+rules:
+- apiGroups:
+  - pxc.percona.com
+  resources:
+  - perconaxtradbclusters
+  - perconaxtradbbackups
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  - configmaps
+  - services
+  - persistentvolumeclaims
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - replicasets
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  - cronjobs
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: r2-pxc-operator-pxc-operator
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+roleRef:
+  kind: Role
+  name: percona-xtradb-cluster-operator
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Source: pxc-operator/templates/operator.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: r2-pxc-operator-pxc-operator
+  labels:
+    app: pxc-operator
+    chart: pxc-operator-0.1.0
+    release: r2
+    heritage: Tiller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pxc-operator
+      release: r2
+  template:
+    metadata:
+      labels:
+        app: pxc-operator
+        release: r2
+    spec:
+      containers:
+        - name: pxc-operator
+          image: "percona/percona-xtradb-cluster-operator:0.3.0"
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 60000
+            name: metrics
+          command:
+          - percona-xtradb-cluster-operator
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: OPERATOR_NAME
+              value: r2-pxc-operator-pxc-operator
+
+---
+# Source: pxc-operator/templates/pxc-cluster.yaml
+
+apiVersion: "pxc.percona.com/v1alpha1"
+kind: "PerconaXtraDBCluster"
+metadata:
+  name: px-cluster
+  labels:
+    chart: "pxc-operator-0.1.0"
+    app: pxc-operator
+    heritage: Tiller
+    release: r2
+  finalizers:
+    - delete-pxc-pods-in-order
+spec:
+  secretsName: "my-cluster-secrets-px-cluster"
+  pxc:
+    size: 3
+    allowUnsafeConfigurations: false
+    image: percona/percona-xtradb-cluster-operator:0.3.0-pxc
+    resources:
+      requests:
+        memory: 1G
+        cpu: 600m
+    podDisruptionBudget:
+      maxUnavailable: 1
+    volumeSpec:
+      emptyDir: {}
+  proxysql:
+    enabled: false
+    size: 1
+    image: perconalab/proxysql-openshift:0.3.0
+    resources:
+      requests:
+        memory: 1G
+        cpu: 600m
+    volumeSpec:
+      emptyDir: {}
+  pmm:
+    enabled: false
+    image: perconalab/pmm-client:1.17.0
+    serverHost: monitoring-service
+    serverUser: pmm
+  backup:
+    image: perconalab/backupjob-openshift:0.2.0
+    storages:
+      s3-us-west:
+        type: s3
+        s3:
+          bucket: S3-BACKUP-BUCKET-NAME-HERE
+          credentialsSecret: my-cluster-name-backup-s3
+          region: us-west-2
+      fs-pvc:
+        type: filesystem
+        volume:
+          emptyDir: {}
+    schedule:
+      - name: "sat-night-backup"
+        schedule: "0 0 * * 6"
+        keep: 3
+        storageName: s3-us-west
+      - name: "daily-backup"
+        schedule: "0 0 * * *"
+        keep: 5
+        storageName: fs-pvc
+
