@@ -1,0 +1,21 @@
+categories:
+- psmdb
+- keyvalue
+questions:
+- variable: deployments.psmdbOperator
+  default: true
+  description: "Deploy the PSMDB operator"
+  required: true
+  label: Deploy the PSMDB  Operator
+  type: boolean
+- variable: psmdbCluster.size
+  default: "3"
+  description: "PSMDB cluster size"
+  label: PSMDB Cluster Size
+  type: enum
+  group: "PSMDB Cluster"
+  options:
+    - "3"
+    - "5"
+    - "7"
+  required: true

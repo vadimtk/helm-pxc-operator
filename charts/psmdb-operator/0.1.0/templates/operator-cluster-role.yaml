@@ -1,37 +1,28 @@
 {{- if .Values.rbac.create }}
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/{{ .Values.rbac.apiVersion }}
+kind: ClusterRole
 metadata:
-  name: {{ template "pxc-operator.fullname" . }}
-  annotations:
-    "helm.sh/hook": post-delete
-    "helm.sh/hook-delete-policy": hook-succeeded
-    "helm.sh/hook-weight": "1"
+  name: {{ template "psmdb-operator.fullname" . }}
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    app: {{ template "pxc-operator.name" . }}
+    app: {{ template "psmdb-operator.name" . }}
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
 rules:
 - apiGroups:
-  - pxc.percona.com
+  - psmdb.percona.com
   resources:
-  - perconaxtradbclusters
-  - perconaxtradbbackups
+  - perconaservermongodbs
   verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
+  - "get"
+  - "list"
+  - "update"
+  - "watch"
 - apiGroups:
   - ""
   resources:
   - pods
   - pods/exec
-  - configmaps
   - services
   - persistentvolumeclaims
   - secrets
@@ -60,7 +51,6 @@ rules:
 - apiGroups:
   - batch
   resources:
-  - jobs
   - cronjobs
   verbs:
   - get
@@ -82,17 +72,4 @@ rules:
   - update
   - patch
   - delete
----
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
-metadata:
-  name: {{ template "pxc-operator.fullname" . }}
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: {{ .Release.Namespace }}
-roleRef:
-  kind: Role
-  name: percona-xtradb-cluster-operator
-  apiGroup: rbac.authorization.k8s.io
 {{- end }}

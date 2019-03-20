@@ -1,0 +1,11 @@
+apiVersion: v1
+description: Percona Server for MongoDB Operator Helm chart for Kubernetes
+name: pmsdb-operator
+version: 0.1.0
+appVersion: 0.1.0
+home: https://github.com/percona/percona-server-mongodb-operator
+sources:
+- https://github.com/percona/percona-server-mongodb-operator
+maintainers:
+- name: vadimtk
+  email: vadimtk111@percona.com

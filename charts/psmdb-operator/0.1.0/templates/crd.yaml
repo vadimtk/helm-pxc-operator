@@ -1,0 +1,20 @@
+{{- if .Values.deployments.psmdbOperator }}
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: perconaservermongodbs.psmdb.percona.com
+  annotations:
+    "helm.sh/hook": "crd-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+spec:
+  group: psmdb.percona.com
+  names:
+    kind: PerconaServerMongoDB
+    listKind: PerconaServerMongoDBList
+    plural: perconaservermongodbs
+    singular: perconaservermongodb
+    shortNames:
+    - psmdb
+  scope: Namespaced
+  version: v1alpha1
+{{- end }}

@@ -2,21 +2,22 @@
 replicaCount: 1
 
 image:
-  repository: percona/percona-xtradb-cluster-operator
+  repository: percona/percona-server-mongodb-operator
   tag: 0.3.0
   pullPolicy: Always
 
 ## Install Default RBAC roles and bindings
 rbac:
   create: true
+  apiVersion: v1beta1
 
 serviceAccount:
-  pxcOperatorServiceAccount:
+  psmdbOperatorServiceAccount:
     create: true
-    name:
+    name: default
 
 deployments:
-  pxcOperator: true
+  psmdbOperator: true
 
 resources: {}
   # limits:
@@ -30,9 +31,9 @@ resources: {}
 ## e.g., analytics: true
 commandArgs: {}
 
-pxcOperator:
-  name: pxc-operator
+psmdbOperator:
+  name: psmdb-operator
 
-pxcCluster:
-  name: px-cluster
+psmdbCluster:
+  name: psmdb-cluster
   size: 3
